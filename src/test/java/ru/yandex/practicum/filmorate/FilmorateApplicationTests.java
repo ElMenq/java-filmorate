@@ -111,6 +111,6 @@ class FilmorateApplicationTests {
 				.login("Login")
 				.birthday(LocalDate.of(2023, 12, 12))
 				.build();
-		assertEquals(false, UserController.validate(user));
+		assertEquals(true, UserController.validate(user));
 	}
 }

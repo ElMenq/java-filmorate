@@ -15,8 +15,6 @@ public class User {
     @NotNull
     @NotBlank
     private String email;
-    @NotNull
-    @NotBlank
     private String login;
     private String name;
     private LocalDate birthday;

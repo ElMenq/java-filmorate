@@ -51,6 +51,7 @@ public class UserController {
         log.debug("Обновлены данные пользователя с id {}. Новые данные: {}", userId, user);
         return user;
     }
+
     private static void validate(User user) {
         String email = user.getEmail();
         String login = user.getLogin();

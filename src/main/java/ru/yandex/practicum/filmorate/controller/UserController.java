@@ -25,11 +25,8 @@ public class UserController {
     }
 
     @PostMapping(value = "/users")
-    public User create(@Valid @RequestBody User user) throws ValidationException {
-        boolean isCorrect = validate(user);
-        if (!isCorrect) {
-            throw new ValidationException();
-        }
+    public User create(@Valid @RequestBody User user) {
+        validate(user);
         String name = user.getName();
         String login = user.getLogin();
         if (name == null || name.isEmpty()) {
@@ -42,25 +39,9 @@ public class UserController {
         return user;
     }
 
-    public static boolean validate(User user) {
-        String email = user.getEmail();
-        String login = user.getLogin();
-        LocalDate birthday = user.getBirthday();
-        if (email == null || email.isEmpty() || !email.contains("@")) {
-            log.debug("Электронная почта не указана или не указан символ '@'");
-            return false;
-        } else if (login == null || login.isEmpty() || login.contains(" ")) {
-            log.debug("Логин пользователя с электронной почтой {} не указан или содержит пробел", email);
-            return false;
-        } else if (birthday.isAfter(LocalDate.now())) {
-            log.debug("Дата рождения пользователя с логином {} указана будущим числом", login);
-            return false;
-        }
-        return true;
-    }
-
     @PutMapping(value = "/users")
-    public User update(@Valid @RequestBody User user) throws ValidationException {
+    public User update(@Valid @RequestBody User user) {
+        validate(user);
         int userId = user.getId();
         if (!users.containsKey(userId)) {
             log.debug("Не найден пользователь в списке с id: {}", userId);
@@ -69,5 +50,22 @@ public class UserController {
         users.put(userId, user);
         log.debug("Обновлены данные пользователя с id {}. Новые данные: {}", userId, user);
         return user;
+    }
+    private static void validate(User user) {
+        String email = user.getEmail();
+        String login = user.getLogin();
+        LocalDate birthday = user.getBirthday();
+        if (email == null || email.isEmpty() || !email.contains("@")) {
+            log.debug("User email invalid");
+            throw new ValidationException();
+        }
+        if (login == null || login.isEmpty() || login.contains(" ")) {
+            log.debug("User login invalid", email);
+            throw new ValidationException();
+        }
+        if (birthday.isAfter(LocalDate.now())) {
+            log.debug("User birthday invalid", login);
+            throw new ValidationException();
+        }
     }
 }

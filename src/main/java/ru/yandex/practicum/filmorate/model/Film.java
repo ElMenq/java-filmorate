@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 /**
@@ -17,7 +16,6 @@ import java.time.LocalDate;
 @Builder
 public class Film {
     private int id;
-    @NotNull
     @NotBlank
     private String name;
     private String description;

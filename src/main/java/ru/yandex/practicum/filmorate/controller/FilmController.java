@@ -20,7 +20,7 @@ public class FilmController {
 
     public static final LocalDate FILM_BIRTHDAY = LocalDate.of(1895, 12, 28);
 
-    public static final int MAX_NAME_SIZE=200;
+    public static final int MAX_NAME_SIZE = 200;
 
     @GetMapping("/films")
     public List<Film> get() {

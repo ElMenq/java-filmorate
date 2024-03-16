@@ -21,7 +21,7 @@ class FilmorateApplicationTests {
 	void validateFilmFail() {
 		final Film film = new Film();
 		Exception exception = assertThrows(ValidationException.class, () -> filmController.validate(film));
-		assertEquals("Film invalid", exception.getMessage());
+		assertEquals("Film name invalid", exception.getMessage());
 
 		film.setName("filmName");
 		exception = assertThrows(ValidationException.class, () -> filmController.validate(film));
@@ -58,7 +58,7 @@ class FilmorateApplicationTests {
 
 		user.setLogin("userLogin");
 		exception = assertThrows(ValidationException.class, () -> userController.validate(user));
-		assertEquals("User email invalid", exception.getMessage());
+		assertEquals("User login invalid", exception.getMessage());
 
 		user.setEmail("user email");
 		exception = assertThrows(ValidationException.class, () -> userController.validate(user));

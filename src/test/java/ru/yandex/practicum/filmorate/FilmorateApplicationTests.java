@@ -25,19 +25,17 @@ class FilmorateApplicationTests {
 
 		film.setName("filmName");
 		exception = assertThrows(ValidationException.class, () -> filmController.validate(film));
-		assertEquals("Film name invalid", exception.getMessage());
+		assertEquals("Film description invalid", exception.getMessage());
 
 		film.setDescription("filmDescription");
 		exception = assertThrows(ValidationException.class, () -> filmController.validate(film));
-		assertEquals("Film description invalid", exception.getMessage());
+		assertEquals("Film releaseDate invalid", exception.getMessage());
 
 		film.setReleaseDate(LocalDate.of(1895, 12, 28));
 		exception = assertThrows(ValidationException.class, () -> filmController.validate(film));
-		assertEquals("Film releaseDate invalid", exception.getMessage());
+		assertEquals("Film duration invalid", exception.getMessage());
 
 		film.setDuration(200);
-		exception = assertThrows(ValidationException.class, () -> filmController.validate(film));
-		assertEquals("Film duration invalid", exception.getMessage());
 	}
 
 	@Test
@@ -54,11 +52,11 @@ class FilmorateApplicationTests {
 	void validateUserFail() {
 		final User user = new User();
 		Exception exception = assertThrows(ValidationException.class, () -> userController.validate(user));
-		assertEquals("User login invalid", exception.getMessage());
+		assertEquals("User email invalid", exception.getMessage());
 
 		user.setLogin("userLogin");
 		exception = assertThrows(ValidationException.class, () -> userController.validate(user));
-		assertEquals("User login invalid", exception.getMessage());
+		assertEquals("User email invalid", exception.getMessage());
 
 		user.setEmail("user email");
 		exception = assertThrows(ValidationException.class, () -> userController.validate(user));

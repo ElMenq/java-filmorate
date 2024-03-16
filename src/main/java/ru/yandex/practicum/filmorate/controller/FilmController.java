@@ -42,8 +42,7 @@ public class FilmController {
         validate(film);
         int filmId = film.getId();
         if (!films.containsKey(filmId)) {
-            log.debug("Не найден фильм в списке с id: {}", filmId);
-            throw new ValidationException();
+            throw new ValidationException("Не найден фильм в списке с id: "+ filmId);
         }
         films.put(filmId, film);
         log.debug("Обновлены данные фильма с id {}. Новые данные: {}", filmId, film);
@@ -58,14 +57,14 @@ public class FilmController {
         if (name == null || name.isEmpty()) {
             throw new ValidationException("Film name invalid");
         }
-        if (description != null && description.length() > MAX_NAME_SIZE) {
+        if (description == null || description.length() > MAX_NAME_SIZE) {
             throw new ValidationException("Film description invalid");
         }
-        if (releaseDate.isBefore(FILM_BIRTHDAY)) {
+        if (film.getReleaseDate() == null || releaseDate.isBefore(FILM_BIRTHDAY)) {
             throw new ValidationException("Film releaseDate invalid");
         }
-        if (duration < 0) {
-            throw new ValidationException("Film duration invalid {}");
+        if (duration <= 0) {
+            throw new ValidationException("Film duration invalid");
         }
     }
 }

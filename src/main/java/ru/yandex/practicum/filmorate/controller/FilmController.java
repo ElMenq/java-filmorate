@@ -50,7 +50,7 @@ public class FilmController {
         return film;
     }
 
-    private static void validate(Film film) {
+    public static void validate(Film film) {
         String name = film.getName();
         String description = film.getDescription();
         LocalDate releaseDate = film.getReleaseDate();

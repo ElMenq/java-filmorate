@@ -52,7 +52,7 @@ public class UserController {
         return user;
     }
 
-    private static void validate(User user) {
+    public static void validate(User user) {
         String email = user.getEmail();
         String login = user.getLogin();
         LocalDate birthday = user.getBirthday();

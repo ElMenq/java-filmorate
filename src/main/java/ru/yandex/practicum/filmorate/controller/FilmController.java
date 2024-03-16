@@ -56,20 +56,16 @@ public class FilmController {
         LocalDate releaseDate = film.getReleaseDate();
         long duration = film.getDuration();
         if (name == null || name.isEmpty()) {
-            log.debug("Film name invalid");
-            throw new ValidationException();
+            throw new ValidationException("Film name invalid");
         }
         if (description != null && description.length() > MAX_NAME_SIZE) {
-            log.debug("Film description invalid");
-            throw new ValidationException();
+            throw new ValidationException("Film description invalid");
         }
         if (releaseDate.isBefore(FILM_BIRTHDAY)) {
-            log.debug("Film releaseDate invalid");
-            throw new ValidationException();
+            throw new ValidationException("Film releaseDate invalid");
         }
         if (duration < 0) {
-            log.debug("Film duration invalid {}", name);
-            throw new ValidationException();
+            throw new ValidationException("Film duration invalid {}");
         }
     }
 }

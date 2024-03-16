@@ -58,15 +58,13 @@ public class UserController {
         LocalDate birthday = user.getBirthday();
         if (email == null || email.isEmpty() || !email.contains("@")) {
             log.debug("User email invalid");
-            throw new ValidationException();
+            throw new ValidationException("User email invalid");
         }
         if (login == null || login.isEmpty() || login.contains(" ")) {
-            log.debug("User login invalid {}", login);
-            throw new ValidationException();
+            throw new ValidationException("User login invalid");
         }
         if (birthday.isAfter(LocalDate.now())) {
-            log.debug("User birthday invalid");
-            throw new ValidationException();
+            throw new ValidationException("User birthday invalid");
         }
     }
 }

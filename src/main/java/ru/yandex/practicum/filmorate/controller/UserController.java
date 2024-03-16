@@ -61,11 +61,11 @@ public class UserController {
             throw new ValidationException();
         }
         if (login == null || login.isEmpty() || login.contains(" ")) {
-            log.debug("User login invalid", email);
+            log.debug("User login invalid {}", login);
             throw new ValidationException();
         }
         if (birthday.isAfter(LocalDate.now())) {
-            log.debug("User birthday invalid", login);
+            log.debug("User birthday invalid");
             throw new ValidationException();
         }
     }

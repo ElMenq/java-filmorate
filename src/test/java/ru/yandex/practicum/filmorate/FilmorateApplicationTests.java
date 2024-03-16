@@ -23,7 +23,7 @@ class FilmorateApplicationTests {
 				.releaseDate(LocalDate.of(1895, 12, 28))
 				.duration(0)
 				.build();
-		filmController.validate(film);
+		FilmController.validate(film);
 	}
 
 	@Test
@@ -35,7 +35,7 @@ class FilmorateApplicationTests {
 				.releaseDate(LocalDate.of(1896, 12, 28))
 				.duration(120)
 				.build();
-		filmController.validate(film);
+		FilmController.validate(film);
 	}
 
 	@Test
@@ -48,7 +48,7 @@ class FilmorateApplicationTests {
 				.releaseDate(LocalDate.of(1896, 12, 28))
 				.duration(120)
 				.build();
-		filmController.validate(film);
+		FilmController.validate(film);
 	}
 
 	@Test
@@ -74,7 +74,7 @@ class FilmorateApplicationTests {
 				.releaseDate(LocalDate.of(1896, 12, 28))
 				.duration(-120)
 				.build();
-		filmController.validate(film);
+		FilmController.validate(film);
 	}
 
 	@Test
@@ -84,7 +84,7 @@ class FilmorateApplicationTests {
 				.login("Login")
 				.birthday(LocalDate.of(2023, 01, 18))
 				.build();
-		userController.validate(user);
+		UserController.validate(user);
 	}
 
 	@Test
@@ -94,7 +94,7 @@ class FilmorateApplicationTests {
 				.login("Login")
 				.birthday(LocalDate.of(2022, 12, 12))
 				.build();
-		userController.validate(user);
+		UserController.validate(user);
 	}
 
 	@Test
@@ -104,7 +104,7 @@ class FilmorateApplicationTests {
 				.login("Log in")
 				.birthday(LocalDate.of(2022, 12, 12))
 				.build();
-		userController.validate(user);
+		UserController.validate(user);
 	}
 
 	@Test
@@ -114,6 +114,6 @@ class FilmorateApplicationTests {
 				.login("Login")
 				.birthday(LocalDate.of(2023, 12, 12))
 				.build();
-		userController.validate(user);
+		UserController.validate(user);
 	}
 }

@@ -60,15 +60,15 @@ public class FilmController {
             throw new ValidationException();
         }
         if (description != null && description.length() > MAX_NAME_SIZE) {
-            log.debug("Film description invalid", name);
+            log.debug("Film description invalid");
             throw new ValidationException();
         }
         if (releaseDate.isBefore(FILM_BIRTHDAY)) {
-            log.debug("Film releaseDate invalid", name);
+            log.debug("Film releaseDate invalid");
             throw new ValidationException();
         }
         if (duration < 0) {
-            log.debug("Film duration invalid", name);
+            log.debug("Film duration invalid {}", name);
             throw new ValidationException();
         }
     }

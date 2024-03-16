@@ -42,7 +42,7 @@ public class FilmController {
         validate(film);
         int filmId = film.getId();
         if (!films.containsKey(filmId)) {
-            throw new ValidationException("Не найден фильм в списке с id: "+ filmId);
+            throw new ValidationException("Не найден фильм в списке с id: " + filmId);
         }
         films.put(filmId, film);
         log.debug("Обновлены данные фильма с id {}. Новые данные: {}", filmId, film);

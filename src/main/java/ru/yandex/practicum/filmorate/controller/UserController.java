@@ -44,7 +44,7 @@ public class UserController {
         validate(user);
         int userId = user.getId();
         if (!users.containsKey(userId)) {
-            throw new ValidationException("Не найден пользователь в списке с id: "+userId);
+            throw new ValidationException("Не найден пользователь в списке с id: " +userId);
         }
         users.put(userId, user);
         log.debug("Обновлены данные пользователя с id {}. Новые данные: {}", userId, user);

@@ -74,7 +74,7 @@ public class InMemoryUserStorage implements UserStorage {
             log.debug("User email invalid");
             throw new ValidationException("User email invalid");
         }
-        if (login == null || login.isEmpty() || login.contains(" ")) {
+        if (login == null || login.isEmpty() || login.contains("")) {
             throw new ValidationException("User login invalid");
         }
         if (birthday.isAfter(LocalDate.now())) {

@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * Film.
@@ -21,4 +22,13 @@ public class Film {
     private String description;
     private LocalDate releaseDate;
     private long duration;
+    private Set<Integer> likeUsers; // список пользователей, кто поставил лайк
+
+    public void addLike(Integer userId) {
+        this.likeUsers.add(userId);
+    }
+
+    public void deleteLike(Integer userId) {
+        this.likeUsers.remove(userId);
+    }
 }

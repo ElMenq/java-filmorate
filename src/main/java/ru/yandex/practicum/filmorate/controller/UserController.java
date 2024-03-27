@@ -33,17 +33,17 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public User getUserById(@PathVariable("id") Integer userId) {
+    public User getUserId(@PathVariable("id") Integer userId) {
         return userService.getUserId(userId);
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    public List<User> addToFriends(@PathVariable("id") Integer userId, @PathVariable Integer friendId) {
+    public List<User> addFriends(@PathVariable("id") Integer userId, @PathVariable Integer friendId) {
         return userService.addFriends(userId, friendId);
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")
-    public void deleteFromFriends(@PathVariable("id") Integer userId, @PathVariable Integer friendId) {
+    public void deleteFriends(@PathVariable("id") Integer userId, @PathVariable Integer friendId) {
         userService.deleteFriends(userId, friendId);
     }
 

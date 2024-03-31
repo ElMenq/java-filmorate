@@ -66,22 +66,6 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
-    public static void validate(User user) {
-        String email = user.getEmail();
-        String login = user.getLogin();
-        LocalDate birthday = user.getBirthday();
-        if (email == null || email.isEmpty() || !email.contains("@")) {
-            log.debug("User email invalid");
-            throw new ValidationException("User email invalid");
-        }
-        if (login == null || login.isEmpty() || login.contains(" ")) {
-            throw new ValidationException("User login invalid");
-        }
-        if (birthday.isAfter(LocalDate.now())) {
-            throw new ValidationException("User birthday invalid");
-        }
-    }
-
     @Override
     public List<User> addFriends(Integer userId, Integer friendId) {
         User user = getUserId(userId);
@@ -127,5 +111,21 @@ public class InMemoryUserStorage implements UserStorage {
             friends.add(getUserId(id));
         }
         return friends;
+    }
+
+    public static void validate(User user) {
+        String email = user.getEmail();
+        String login = user.getLogin();
+        LocalDate birthday = user.getBirthday();
+        if (email == null || email.isEmpty() || !email.contains("@")) {
+            log.debug("User email invalid");
+            throw new ValidationException("User email invalid");
+        }
+        if (login == null || login.isEmpty() || login.contains(" ")) {
+            throw new ValidationException("User login invalid");
+        }
+        if (birthday.isAfter(LocalDate.now())) {
+            throw new ValidationException("User birthday invalid");
+        }
     }
 }

@@ -67,25 +67,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
     }
 
-    public static void validate(Film film) {
-        String name = film.getName();
-        String description = film.getDescription();
-        LocalDate releaseDate = film.getReleaseDate();
-        long duration = film.getDuration();
-        if (name == null || name.isEmpty()) {
-            throw new ValidationException("Film name invalid");
-        }
-        if (description == null || description.length() > MAX_NAME_SIZE) {
-            throw new ValidationException("Film description invalid");
-        }
-        if (film.getReleaseDate() == null || releaseDate.isBefore(FILM_BIRTHDAY)) {
-            throw new ValidationException("Film releaseDate invalid");
-        }
-        if (duration <= 0) {
-            throw new ValidationException("Film duration invalid");
-        }
-    }
-
     @Override
     public void addLike(Integer filmId, Integer userId) {
         Film film = getFilmId(filmId);
@@ -111,5 +92,24 @@ public class InMemoryFilmStorage implements FilmStorage {
     private int compare(Film film0, Film film1) {
         int result = film1.getLikeUsers().size() - film0.getLikeUsers().size();
         return result;
+    }
+
+    public static void validate(Film film) {
+        String name = film.getName();
+        String description = film.getDescription();
+        LocalDate releaseDate = film.getReleaseDate();
+        long duration = film.getDuration();
+        if (name == null || name.isEmpty()) {
+            throw new ValidationException("Film name invalid");
+        }
+        if (description == null || description.length() > MAX_NAME_SIZE) {
+            throw new ValidationException("Film description invalid");
+        }
+        if (film.getReleaseDate() == null || releaseDate.isBefore(FILM_BIRTHDAY)) {
+            throw new ValidationException("Film releaseDate invalid");
+        }
+        if (duration <= 0) {
+            throw new ValidationException("Film duration invalid");
+        }
     }
 }

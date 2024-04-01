@@ -67,7 +67,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> addFriends(Integer userId, Integer friendId) {
+    public List<User>  addFriends(Integer userId, Integer friendId) {
         User user = getUserId(userId);
         User friend = getUserId(friendId);
         user.addFriend(friendId);

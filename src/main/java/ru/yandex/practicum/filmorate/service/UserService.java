@@ -34,12 +34,18 @@ public class UserService {
         return userStorage.getUserId(userId);
     }
 
-    public List<User> addFriends(Integer userId, Integer friendId) {
-        return userStorage.addFriends(userId, friendId);
+    public void addFriends(Integer userId, Integer friendId) {
+        final User user = userStorage.getUserId(userId);
+        final User friend = userStorage.getUserId(friendId);
+        user.getFriends().add(friendId);
+        friend.getFriends().add(userId);
     }
 
     public void deleteFriends(Integer userId, Integer friendId) {
-        userStorage.deleteFriends(userId, friendId);
+        final User user = userStorage.getUserId(userId);
+        final User friend = userStorage.getUserId(friendId);
+        user.getFriends().remove(friendId);
+        friend.getFriends().remove(userId);
     }
 
     public List<User> getFriends(Integer userId) {

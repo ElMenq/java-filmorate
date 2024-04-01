@@ -41,9 +41,8 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    public List<User> addFriends(@PathVariable("id") Integer userId, @PathVariable Integer friendId) {
+    public void addFriends(@PathVariable("id") Integer userId, @PathVariable Integer friendId) {
         log.info("Add friend by id {}", friendId);
-        return userService.addFriends(userId, friendId);
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")

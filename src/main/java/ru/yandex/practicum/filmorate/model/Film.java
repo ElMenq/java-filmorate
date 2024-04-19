@@ -23,6 +23,8 @@ public class Film {
     private LocalDate releaseDate;
     private long duration;
     private Set<Integer> likeUsers; // список пользователей, кто поставил лайк
+    private Set<Genre> genres;
+    private Rating mpa;
 
     public void addLike(Integer userId) {
         this.likeUsers.add(userId);

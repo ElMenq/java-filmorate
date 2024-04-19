@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class FilmorateApplicationTest {
+class FilmorateApplicationTests {
 
 	private final JdbcTemplate jdbcTemplate;
 	private final UserDbStorage userStorage;

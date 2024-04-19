@@ -162,13 +162,13 @@ public class FilmDbStorage implements FilmStorage {
         String sqlQuery = "update films set " +
                 "name = ?, description = ?, release_date = ?, duration = ?, rating_id = ?" +
                 "where id = ?";
-        int totalUpdate = jdbcTemplate.update(sqlQuery
-                , film.getName()
-                , film.getDescription()
-                , film.getReleaseDate()
-                , film.getDuration()
-                , film.getMpa().getId()
-                , filmId);
+        int totalUpdate = jdbcTemplate.update(sqlQuery,
+                 film.getName(),
+                 film.getDescription(),
+                 film.getReleaseDate(),
+                 film.getDuration(),
+                 film.getMpa().getId(),
+                 filmId);
         if (totalUpdate == 0) {
             throw new NotFoundException();
         }

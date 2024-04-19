@@ -131,12 +131,12 @@ public class UserDbStorage implements UserStorage {
         String sqlQuery = "update users set " +
                 "email = ?, login = ?, name = ?, birthday = ?" +
                 "where id = ?";
-        int totalUpdate = jdbcTemplate.update(sqlQuery
-                , user.getEmail()
-                , user.getLogin()
-                , user.getName()
-                , user.getBirthday()
-                , userId);
+        int totalUpdate = jdbcTemplate.update(sqlQuery,
+                 user.getEmail(),
+                 user.getLogin(),
+                 user.getName(),
+                 user.getBirthday(),
+                 userId);
         if (totalUpdate == 0) {
             log.info("Не найден пользователь в списке с id: {}", userId);
             throw new NotFoundException();

@@ -28,6 +28,7 @@ public class Film {
     public void addLike(Integer userId) {
         this.likesByUsers.add(userId);
     }
+
     public void deleteLike(Integer userId) {
         this.likesByUsers.remove(userId);
     }

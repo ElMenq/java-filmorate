@@ -21,7 +21,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> get() {
-        log.debug("Текущее количество пользователей: {}", users.size());
+        log.info("Текущее количество пользователей: {}", users.size());
         return users.values().parallelStream().collect(Collectors.toList());
     }
 
@@ -32,14 +32,14 @@ public class InMemoryUserStorage implements UserStorage {
         String login = user.getLogin();
         if (name == null || name.isEmpty()) {
             user.setName(login);
-            log.debug("Для пользователя с логином {} установлено новое имя {}", login, user.getName());
+            log.info("Для пользователя с логином {} установлено новое имя {}", login, user.getName());
         }
         user.setId(++this.id);
         if (user.getFriends() == null) {
             user.setFriends(new HashMap<>());
         }
         users.put(user.getId(), user);
-        log.debug("Добавлен новый пользователь: {}", user);
+        log.info("Добавлен новый пользователь: {}", user);
         return user;
     }
 
@@ -48,14 +48,14 @@ public class InMemoryUserStorage implements UserStorage {
         validate(user);
         int userId = user.getId();
         if (!users.containsKey(userId)) {
-            log.debug("Не найден пользователь в списке с id: {}", userId);
+            log.info("Не найден пользователь в списке с id: {}", userId);
             throw new NotFoundException();
         }
         if (user.getFriends() == null) {
             user.setFriends(new HashMap<>());
         }
         users.put(userId, user);
-        log.debug("Обновлены данные пользователя с id {}. Новые данные: {}", userId, user);
+        log.info("Обновлены данные пользователя с id {}. Новые данные: {}", userId, user);
         return user;
     }
 
@@ -68,8 +68,24 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
+    public static void validate(User user) {
+        String email = user.getEmail();
+        String login = user.getLogin();
+        LocalDate birthday = user.getBirthday();
+        if (email == null || email.isEmpty() || !email.contains("@")) {
+            log.debug("User email invalid");
+            throw new ValidationException("User email invalid");
+        }
+        if (login == null || login.isEmpty() || login.contains(" ")) {
+            throw new ValidationException("User login invalid");
+        }
+        if (birthday.isAfter(LocalDate.now())) {
+            throw new ValidationException("User birthday invalid");
+        }
+    }
+
     @Override
-    public List<User>  addFriends(Integer userId, Integer friendId) {
+    public List<User> addFriends(Integer userId, Integer friendId) {
         User user = getUserId(userId);
         User friend = getUserId(friendId);
         user.addFriend(friendId);
@@ -87,7 +103,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void deleteFriends(Integer userId, Integer friendId) {
         User user = getUserId(userId);
-        user.deleteFriends(friendId);
+        user.deleteFromFriends(friendId);
     }
 
     @Override
@@ -113,21 +129,5 @@ public class InMemoryUserStorage implements UserStorage {
             friends.add(getUserId(id));
         }
         return friends;
-    }
-
-    public static void validate(User user) {
-        String email = user.getEmail();
-        String login = user.getLogin();
-        LocalDate birthday = user.getBirthday();
-        if (email == null || email.isEmpty() || !email.contains("@")) {
-            log.debug("User email invalid");
-            throw new ValidationException("User email invalid");
-        }
-        if (login == null || login.isEmpty() || login.contains(" ")) {
-            throw new ValidationException("User login invalid");
-        }
-        if (birthday.isAfter(LocalDate.now())) {
-            throw new ValidationException("User birthday invalid");
-        }
     }
 }

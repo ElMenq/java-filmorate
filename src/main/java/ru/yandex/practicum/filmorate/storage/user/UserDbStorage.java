@@ -18,7 +18,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -181,14 +184,14 @@ public class UserDbStorage implements UserStorage {
         User friend = getUserId(friendId);
         user.addFriend(friendId);
         update(user);
-        return getFriends(userId); // вернём список всех друзей (включая нового друга с friendId) пользователя с userId
+        return getFriends(userId);
     }
 
     @Override
     public void deleteFriends(Integer userId, Integer friendId) {
         User user = getUserId(userId);
         User friend = getUserId(friendId);
-        user.deleteFriends(friendId);
+        user.deleteFromFriends(friendId);
         update(user);
     }
 
@@ -210,7 +213,7 @@ public class UserDbStorage implements UserStorage {
     public List<User> getCommonFriends(Integer userId, Integer friendId) {
         List<User> commonFriends = new ArrayList<>();
         String sqlQuery = "select * from users where id in (select friend_id from friendships where user_id = ? and friend_id in " +
-                "(select distinct friend_id from friendships where user_id = ?))";
+            "(select distinct friend_id from friendships where user_id = ?))";
         SqlRowSet friendsRows = jdbcTemplate.queryForRowSet(sqlQuery, userId, friendId);
         if (friendsRows.next()) {
             User user = makeUser(friendsRows);

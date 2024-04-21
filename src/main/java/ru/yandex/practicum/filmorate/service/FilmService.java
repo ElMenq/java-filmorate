@@ -1,27 +1,25 @@
 package ru.yandex.practicum.filmorate.service;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
-
 
 @Service
 public class FilmService {
 
-
+    @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+
+    private final UserService userService;
 
     @Autowired
-    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+        this.userService = userService;
     }
 
     public List<Film> get() {
@@ -37,16 +35,16 @@ public class FilmService {
     }
 
     public Film getFilmId(Integer filmId) {
-        return filmStorage.getFilmId(filmId);
+        return filmStorage.getFilmById(filmId);
     }
 
     public void addLike(Integer filmId, Integer userId) {
-        userStorage.getUserId(userId);
+        userService.getUserById(userId);
         filmStorage.addLike(filmId, userId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
-        userStorage.getUserId(userId);
+        userService.getUserById(userId);
         filmStorage.deleteLike(filmId, userId);
     }
 

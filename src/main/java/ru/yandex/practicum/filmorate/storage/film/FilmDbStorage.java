@@ -19,7 +19,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -41,7 +44,7 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> get() {
         List<Film> films = new ArrayList<>();
         String sql = "SELECT films.ID, films.NAME, films.DESCRIPTION, films.RELEASE_DATE, films.DURATION, " +
-                "films.RATING_ID, ratings.NAME rating_name FROM films LEFT JOIN RATINGS ON films.RATING_ID = ratings.ID";
+            "films.RATING_ID, ratings.NAME rating_name FROM films LEFT JOIN RATINGS ON films.RATING_ID = ratings.ID";
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sql);
         while (filmRows.next()) {
             Film film = makeFilm(filmRows);
@@ -65,7 +68,7 @@ public class FilmDbStorage implements FilmStorage {
                 .description(filmRows.getString("description"))
                 .releaseDate(LocalDate.parse(releaseDate))
                 .duration(filmRows.getLong("duration"))
-                .likeUsers(getLikes(filmId))
+                .likesByUsers(getLikes(filmId))
                 .genres(getFilmGenre(filmId))
                 .mpa(filmRating)
                 .build();
@@ -103,8 +106,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film create(Film film) {
         validate(film);
-        if (film.getLikeUsers() == null) {
-            film.setLikeUsers(new HashSet<>());
+        if (film.getLikesByUsers() == null) {
+            film.setLikesByUsers(new HashSet<>());
         }
         if (film.getGenres() == null) {
             film.setGenres(new HashSet<>());
@@ -130,30 +133,11 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    public static void validate(Film film) {
-        String name = film.getName();
-        String description = film.getDescription();
-        LocalDate releaseDate = film.getReleaseDate();
-        long duration = film.getDuration();
-        if (name == null || name.isEmpty()) {
-            throw new ValidationException("Film name invalid");
-        }
-        if (description == null || description.length() > MAX_NAME_SIZE) {
-            throw new ValidationException("Film description invalid");
-        }
-        if (film.getReleaseDate() == null || releaseDate.isBefore(FILM_BIRTHDAY)) {
-            throw new ValidationException("Film releaseDate invalid");
-        }
-        if (duration <= 0) {
-            throw new ValidationException("Film duration invalid");
-        }
-    }
-
     @Override
     public Film update(Film film) {
         validate(film);
-        if (film.getLikeUsers() == null) {
-            film.setLikeUsers(new HashSet<>());
+        if (film.getLikesByUsers() == null) {
+            film.setLikesByUsers(new HashSet<>());
         }
         if (film.getGenres() == null) {
             film.setGenres(new HashSet<>());
@@ -179,7 +163,7 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sqlQuery, filmId);
         addFilmGenres(film);
         log.info("Обновлено записей: {}", totalUpdate);
-        return getFilmId(filmId);
+        return getFilmById(filmId);
     }
 
     private void addFilmGenres(Film film) {
@@ -202,7 +186,7 @@ public class FilmDbStorage implements FilmStorage {
         String sqlQuery = "insert into likes (film_id, user_id) " +
                 "values (?, ?)";
         int filmId = film.getId();
-        Set<Integer> likesByUsers = film.getLikeUsers();
+        Set<Integer> likesByUsers = film.getLikesByUsers();
         for (Integer userId : likesByUsers) {
             jdbcTemplate.update(sqlQuery,
                     filmId,
@@ -211,7 +195,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilmId(Integer filmId) {
+    public Film getFilmById(Integer filmId) {
         String sql = "SELECT films.ID, films.NAME, films.DESCRIPTION, films.RELEASE_DATE, films.DURATION, " +
                 "films.RATING_ID, ratings.NAME rating_name FROM films LEFT JOIN RATINGS " +
                 "ON films.RATING_ID = ratings.ID where films.ID = ?";
@@ -228,7 +212,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void addLike(Integer filmId, Integer userId) {
-        Film film = getFilmId(filmId);
+        Film film = getFilmById(filmId);
         film.addLike(userId);
         update(film);
         log.info("Добавлен like от пользователя c id {} для фильма: {}", userId, film);
@@ -236,7 +220,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void deleteLike(Integer filmId, Integer userId) {
-        Film film = getFilmId(filmId);
+        Film film = getFilmById(filmId);
         film.deleteLike(userId);
         update(film);
     }
@@ -255,5 +239,24 @@ public class FilmDbStorage implements FilmStorage {
         }
         log.info("Количество популярных фильмов: {}", films.size());
         return films;
+    }
+
+    public static void validate(Film film) {
+        String name = film.getName();
+        String description = film.getDescription();
+        LocalDate releaseDate = film.getReleaseDate();
+        long duration = film.getDuration();
+        if (name == null || name.isEmpty()) {
+            throw new ValidationException("Film name invalid");
+        }
+        if (description == null || description.length() > MAX_NAME_SIZE) {
+            throw new ValidationException("Film description invalid");
+        }
+        if (film.getReleaseDate() == null || releaseDate.isBefore(FILM_BIRTHDAY)) {
+            throw new ValidationException("Film releaseDate invalid");
+        }
+        if (duration <= 0) {
+            throw new ValidationException("Film duration invalid");
+        }
     }
 }

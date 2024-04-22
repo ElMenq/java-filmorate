@@ -195,7 +195,6 @@ public class UserDbStorage implements UserStorage {
         update(user);
     }
 
-    @Override
     public List<User> getFriends(Integer userId) {
         List<User> friends = new ArrayList<>();
         String sqlQuery = "select * from users where id in (select distinct friend_id id from friendships where user_id = ?)";
@@ -205,12 +204,12 @@ public class UserDbStorage implements UserStorage {
             friends.add(user);
             log.info("В список друзей добавлен пользователь: {}", user);
         }
-        log.info("Количество пользователей в списке друзей: {}", friends.size());
 
         if (friends.isEmpty()) {
             log.info("Список друзей пользователя с ID {} пуст", userId);
         }
 
+        log.info("Количество пользователей в списке друзей: {}", friends.size());
         return friends;
     }
 

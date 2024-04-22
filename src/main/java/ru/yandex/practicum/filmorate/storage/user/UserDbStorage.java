@@ -18,7 +18,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -202,14 +205,8 @@ public class UserDbStorage implements UserStorage {
             friends.add(user);
             log.info("В список друзей добавлен пользователь: {}", user);
         }
-
-        if (friends.isEmpty()) {
-            log.info("Список друзей пользователя с ID {} пуст", userId);
-            return Collections.emptyList(); // возвращаем пустой список друзей
-        } else {
-            log.info("Количество пользователей в списке друзей: {}", friends.size());
-            return friends;
-        }
+        log.info("Количество пользователей в списке друзей: {}", friends.size());
+        return friends;
     }
 
     @Override

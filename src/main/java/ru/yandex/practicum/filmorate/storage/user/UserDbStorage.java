@@ -18,10 +18,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -197,14 +194,21 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getFriends(Integer userId) {
-        List<User> friends = new ArrayList<>();
         String sqlQuery = "select * from users where id in (select distinct friend_id id from friendships where user_id = ?)";
         SqlRowSet friendshipRows = jdbcTemplate.queryForRowSet(sqlQuery, userId);
-        while (friendshipRows.next()) {
+
+        if (!friendshipRows.next()) {
+            log.warn("Пользователь с id {} не имеет друзей", userId);
+            return Collections.emptyList();
+        }
+
+        List<User> friends = new ArrayList<>();
+        do {
             User user = makeUser(friendshipRows);
             friends.add(user);
             log.info("В список друзей добавлен пользователь: {}", user);
-        }
+        } while (friendshipRows.next());
+
         log.info("Количество пользователей в списке друзей: {}", friends.size());
         return friends;
     }

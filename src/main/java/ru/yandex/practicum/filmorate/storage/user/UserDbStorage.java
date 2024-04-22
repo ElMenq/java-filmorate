@@ -3,12 +3,14 @@ package ru.yandex.practicum.filmorate.storage.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -18,7 +20,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -194,22 +199,21 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getFriends(Integer userId) {
+        List<User> friends = new ArrayList<>();
         String sqlQuery = "select * from users where id in (select distinct friend_id id from friendships where user_id = ?)";
         SqlRowSet friendshipRows = jdbcTemplate.queryForRowSet(sqlQuery, userId);
-
-        if (!friendshipRows.next()) {
-            log.warn("Пользователь с id {} не имеет друзей", userId);
-            return Collections.emptyList();
-        }
-
-        List<User> friends = new ArrayList<>();
-        do {
+        while (friendshipRows.next()) {
             User user = makeUser(friendshipRows);
             friends.add(user);
             log.info("В список друзей добавлен пользователь: {}", user);
-        } while (friendshipRows.next());
-
+        }
         log.info("Количество пользователей в списке друзей: {}", friends.size());
+
+        if (friends.isEmpty()) {
+            log.info("Список друзей пользователя с ID {} пуст", userId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Список друзей пуст");
+        }
+
         return friends;
     }
 

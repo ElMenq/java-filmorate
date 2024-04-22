@@ -195,6 +195,7 @@ public class UserDbStorage implements UserStorage {
         update(user);
     }
 
+    @Override
     public List<User> getFriends(Integer userId) {
         List<User> friends = new ArrayList<>();
         String sqlQuery = "select * from users where id in (select distinct friend_id id from friendships where user_id = ?)";

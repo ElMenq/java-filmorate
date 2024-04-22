@@ -13,10 +13,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -197,16 +194,19 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getFriends(Integer userId) {
-        List<User> friends = new ArrayList<>();
         String sqlQuery = "select * from users where id in (select distinct friend_id id from friendships where user_id = ?)";
-        SqlRowSet friendshipRows = jdbcTemplate.queryForRowSet(sqlQuery, userId);
-        while (friendshipRows.next()) {
-            User user = makeUser(friendshipRows);
-            friends.add(user);
-            log.info("В список друзей добавлен пользователь: {}", user);
-        }
-        log.info("Количество пользователей в списке друзей: {}", friends.size());
-        return friends;
+        return jdbcTemplate.query(sqlQuery, UserDbStorage::createUser, userId);
+    }
+
+    private static User createUser(ResultSet rs, int rowNum) throws SQLException {
+        return User.builder()
+                .id(rs.getInt("id"))
+                .login(rs.getString("login"))
+                .name(rs.getString("name"))
+                .email(rs.getString("email"))
+                .birthday(rs.getDate("birthday").toLocalDate())
+                .friends(new HashMap<>())
+                .build();
     }
 
     @Override

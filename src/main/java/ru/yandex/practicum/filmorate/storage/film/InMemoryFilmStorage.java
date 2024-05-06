@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
+@Qualifier("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
 
     public static final LocalDate FILM_BIRTHDAY = LocalDate.of(1895, 12, 28);
@@ -34,8 +36,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film create(Film film) {
         validate(film);
         film.setId(++this.id);
-        if (film.getLikeUsers() == null) {
-            film.setLikeUsers(new HashSet<Integer>());
+        if (film.getLikesByUsers() == null) {
+            film.setLikesByUsers(new HashSet<Integer>());
         }
         films.put(film.getId(), film);
         log.debug("Добавлен новый фильм: {}", film);
@@ -50,8 +52,8 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.debug("Не найден фильм в списке с id: {}", filmId);
             throw new NotFoundException();
         }
-        if (film.getLikeUsers() == null) {
-            film.setLikeUsers(new HashSet<Integer>());
+        if (film.getLikesByUsers() == null) {
+            film.setLikesByUsers(new HashSet<Integer>());
         }
         films.put(filmId, film);
         log.debug("Обновлены данные фильма с id {}. Новые данные: {}", filmId, film);
@@ -59,7 +61,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilmId(Integer filmId) {
+    public Film getFilmById(Integer filmId) {
         if (films.containsKey(filmId)) {
             return films.get(filmId);
         } else {
@@ -69,14 +71,14 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void addLike(Integer filmId, Integer userId) {
-        Film film = getFilmId(filmId);
+        Film film = getFilmById(filmId);
         film.addLike(userId);
         update(film);
     }
 
     @Override
     public void deleteLike(Integer filmId, Integer userId) {
-        Film film = getFilmId(filmId);
+        Film film = getFilmById(filmId);
         film.deleteLike(userId);
         update(film);
     }
@@ -84,13 +86,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public List<Film> getTopFilms(Integer count) {
         return films.values().stream()
-                .sorted((film0, film1) -> compare(film0, film1))
+                .sorted((f0, f1) -> compare(f0, f1))
                 .limit(count)
                 .collect(Collectors.toList());
     }
 
-    private int compare(Film film0, Film film1) {
-        int result = film1.getLikeUsers().size() - film0.getLikeUsers().size();
+    private int compare(Film f0, Film f1) {
+        int result = f1.getLikesByUsers().size() - f0.getLikesByUsers().size();
         return result;
     }
 

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
+@Qualifier("inMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Integer, User> users = new HashMap<>();
@@ -19,7 +21,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> get() {
-        log.debug("Текущее количество пользователей: {}", users.size());
+        log.info("Текущее количество пользователей: {}", users.size());
         return users.values().parallelStream().collect(Collectors.toList());
     }
 
@@ -30,14 +32,14 @@ public class InMemoryUserStorage implements UserStorage {
         String login = user.getLogin();
         if (name == null || name.isEmpty()) {
             user.setName(login);
-            log.debug("Для пользователя с логином {} установлено новое имя {}", login, user.getName());
+            log.info("Для пользователя с логином {} установлено новое имя {}", login, user.getName());
         }
         user.setId(++this.id);
         if (user.getFriends() == null) {
-            user.setFriends(new HashSet<Integer>());
+            user.setFriends(new HashMap<>());
         }
         users.put(user.getId(), user);
-        log.debug("Добавлен новый пользователь: {}", user);
+        log.info("Добавлен новый пользователь: {}", user);
         return user;
     }
 
@@ -46,14 +48,14 @@ public class InMemoryUserStorage implements UserStorage {
         validate(user);
         int userId = user.getId();
         if (!users.containsKey(userId)) {
-            log.debug("Не найден пользователь в списке с id: {}", userId);
+            log.info("Не найден пользователь в списке с id: {}", userId);
             throw new NotFoundException();
         }
         if (user.getFriends() == null) {
-            user.setFriends(new HashSet<Integer>());
+            user.setFriends(new HashMap<>());
         }
         users.put(userId, user);
-        log.debug("Обновлены данные пользователя с id {}. Новые данные: {}", userId, user);
+        log.info("Обновлены данные пользователя с id {}. Новые данные: {}", userId, user);
         return user;
     }
 
@@ -67,14 +69,14 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User>  addFriends(Integer userId, Integer friendId) {
+    public List<User> addFriends(Integer userId, Integer friendId) {
         User user = getUserId(userId);
         User friend = getUserId(friendId);
         user.addFriend(friendId);
         friend.addFriend(userId);
         update(user);
         update(friend);
-        Set<Integer> friendsId = user.getFriends();
+        Set<Integer> friendsId = user.getFriends().keySet();
         List<User> friends = new ArrayList<>();
         for (Integer id : friendsId) {
             friends.add(getUserId(id));
@@ -85,14 +87,14 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void deleteFriends(Integer userId, Integer friendId) {
         User user = getUserId(userId);
-        user.deleteFriends(friendId);
+        user.deleteFromFriends(friendId);
     }
 
     @Override
     public List<User> getFriends(Integer userId) {
         List<User> friends = new ArrayList<>();
         User user = getUserId(userId);
-        Set<Integer> friendsId = user.getFriends();
+        Set<Integer> friendsId = user.getFriends().keySet();
         for (Integer friendId : friendsId) {
             friends.add(getUserId(friendId));
         }
@@ -103,9 +105,9 @@ public class InMemoryUserStorage implements UserStorage {
     public List<User> getCommonFriends(Integer userId, Integer friendId) {
         List<User> friends = new ArrayList<>();
         User user = getUserId(userId);
-        Set<Integer> userFriendsId = user.getFriends();
+        Set<Integer> userFriendsId = user.getFriends().keySet();
         User friend = getUserId(friendId);
-        Set<Integer> friendsId = friend.getFriends();
+        Set<Integer> friendsId = friend.getFriends().keySet();
         List<Integer> commonId = userFriendsId.stream().filter(friendsId::contains).collect(Collectors.toList());
         for (Integer id : commonId) {
             friends.add(getUserId(id));
